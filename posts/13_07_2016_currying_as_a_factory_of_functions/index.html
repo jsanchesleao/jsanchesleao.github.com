@@ -21,7 +21,7 @@
     </header>
     <div id="post-content">
       <h2 id="currying-as-a-factory-of-functions">Currying as a factory of functions</h2>
-<p>In this post I would like to explore the use of a techique called <code>currying</code> to reduce some of the noise of using higher order functions such as <code>map</code>, <code>filter</code> and even <code>compose</code>.</p>
+<p>In this post I would like to explore the use of a techique called <code>currying</code> to reduce some of the noise of using higher order functions such as <code>map</code>, <code>filter</code> and similar functions..</p>
 <p>First of all, let&#39;s define what is currying, and we&#39;ll do so with examples. Imagine we have the following requirement: We need to count the oocurrencies of a given value inside an array. The traditional way of doing this in javascript would be something along these lines:</p>
 <pre><code class="lang-javascript">function countOcurrencies(array, item) {
   let ocurrencies = 0;
@@ -68,12 +68,24 @@ arrays.map(array =&gt; countOcurrencies(1, array))
 <p>Here we have separated the function that formats content from the rest of the code, so it can be tested independently. It now uses the string interpolation feature, so our code is now more concise. Also there are no for loops declared, as we are now using a forEach function, allowing us to avoid the creation of a temporary variable to loop through the array.</p>
 <p>We can se more clearly now that our operation consists of three separate steps: the first one is calculating the frequency of the number 1 in each array; The second one is formatting the output string for each one of these results and the third and last step is printing them to the console.</p>
 <p>The code is more functional now, but we can still go further by changing the <code>countOcurrencies</code> function.</p>
-<pre><code class="lang-javascript">function countOcurrencies(item, array) {
+<pre><code class="lang-javascript">//old imperative version
+function countOcurrencies(array, item) {
+  let ocurrencies = 0;
+  for (let i = 0; i &lt; array.length; i++) {
+    if (array[i] === item) {
+      ocurrencies = ocurrencies + 1;
+    }
+  }
+  return ocurrencies;
+}
+
+//refactored, more functional version
+function countOcurrencies(item, array) {
   return array.filter(i =&gt; i === item).length
 }
 </code></pre>
 <p>So again we removed the mutable part and the for loop. The entire solution now is a lot more functional, but to go even further we will explore the techique mentioned in the beginning: currying.</p>
-<p>Quick explanation: A function is said to be in the curried form if it accepts one single argument. If the function needs to work with two arguments, it will return another function that accepts the next and so on. Moving to the code, our <code>countOcurrencies</code> function would look like this:</p>
+<p>Quick explanation: A function is said to be in the curried form if it accepts one single argument. If the function needs to work with two arguments, it will return another function that accepts the next and so on. Back to the code, our <code>countOcurrencies</code> function would look like this:</p>
 <pre><code class="lang-javascript">const countOcurrencies = function(item) {
   return function(array) {
     return array.filter(i =&gt; i === item).length
